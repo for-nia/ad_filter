@@ -18,20 +18,21 @@ public class TreeUtil {
             Character c = word.charAt(i);
             TrieNode node = root.getChildren().get(c);
             if(node == null){
-                node = i<size-1 ? buildCommonNode(c,i):buildLeafNode(c,i);
+                node = i<size-1 ? buildCommonNode(c,i,root):buildLeafNode(c,i,root);
                 root.getChildren().put(c,node);
             }else {
                 if(i>=size-1){
-                    node.setLeaf(true);
+                    node.setWord(true);   // 到达词的重点,但是不是叶子节点,说明匹配到词语，但不是最长的
+                    //node.setLeaf(true);
                 }
             }
             root = node;
         }
     }
-    public static TrieNode buildLeafNode(Character c,int height){
-        return new TrieNode.Builder(c).setHeight(height).setIsLeaf(true).build();
+    public static TrieNode buildLeafNode(Character c,int height,TrieNode parent){
+        return new TrieNode.Builder(c).setHeight(height).setIsLeaf(true).setIsWord(true).setParent(parent).build();
     }
-    public static TrieNode buildCommonNode(Character c,int height){
-        return new TrieNode.Builder(c).setHeight(height).setIsLeaf(false).build();
+    public static TrieNode buildCommonNode(Character c,int height,TrieNode parent){
+        return new TrieNode.Builder(c).setHeight(height).setIsLeaf(false).setParent(parent).build();
     }
 }

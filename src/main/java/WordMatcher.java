@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by fornia on 6/29/17.
@@ -8,21 +10,49 @@ public class WordMatcher {
     private final TrieNode tree;
     private String str;
     int position = 0;
+
+    //private static char[] specialChars = new char[]{'，',',','.','。','-','_'};
+    private static Set<Character> specialChars= new HashSet<>();
+    static {
+        specialChars.add('，');
+        specialChars.add(',');
+        specialChars.add('.');
+        specialChars.add('-');
+        specialChars.add('_');
+
+    }
     public WordMatcher(TrieNode tree,String str){
         this.tree = tree;
         this.str = str;
+        doFilter();
     }
     List<Pair> words = new ArrayList<>();
 
 
     public String replaceSensetiveWords(String replace){
-        doFilter();
-        words.stream().forEach(pair->{
-            System.out.println("start :"+pair.start+"end:"+pair.end);
-        });
+        //doFilter();
         StringBuilder sb = new StringBuilder();
-        split().stream().forEach(s->sb.append(s).append(replace));
-        return sb.substring(0,sb.length()-replace.length());
+        List<String> split = split();
+        int size = words.size();
+        for(int i=0 ;i <= size;i++){
+            sb.append(split.get(i));
+            if(i < size){
+                sb.append(getReplace(words.get(i),replace));
+            }
+        }
+        return sb.toString();
+    }
+
+    public boolean isMatch(){
+        return words.size()>0;
+    }
+
+    private String getReplace(Pair pair,String replace){
+        StringBuilder stringBuilder = new StringBuilder();
+        for(int i = pair.start;i<=pair.end;i++){
+            stringBuilder.append(replace);
+        }
+        return stringBuilder.toString();
     }
 
     List<String> split(){
@@ -59,19 +89,29 @@ public class WordMatcher {
         }
     }
     private void handlePair(Pair pair){
-        position += pair.end - pair.start;
+        position += pair.end - pair.start + 1;
         words.add(pair);
     }
-    private Pair matchPair(TrieNode trieNode ,int index){
+
+    private Pair matchPair(TrieNode trienode,int index){
+        TrieNode node = findNode(trienode, index);
+        while (node != null && !node.isWord()){
+            node = node.getParent();
+        }
+        if(node != null){
+            return new Pair(position,position+node.getHeight());
+        }
+        return null;
+    }
+    private TrieNode findNode(TrieNode trieNode ,int index){
+        while (specialChars.contains(str.charAt(index))){
+            index ++;
+        }
         TrieNode node = trieNode.getChildren().get(str.charAt(index));
-        if(index < str.length() && node != null) {
-            if (node.isLeaf()) {
-                return new Pair(position, index);
-            }else {
-                return matchPair(node,index + 1);
-            }
+        if(index < str.length() - 1 && node != null) {
+            return findNode(node,index + 1);
         }else {
-            return null;
+            return node == null?trieNode:node;
         }
     }
 

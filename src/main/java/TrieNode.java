@@ -7,10 +7,12 @@ import java.util.Set;
  * Created by fornia on 6/28/17.
  */
 public class TrieNode {
+    private boolean isWord;
     private boolean isLeaf;
     private int height;
     private char content;
     private Map<Character,TrieNode> children;
+    TrieNode parent;
 
     public TrieNode(char c){
         this.content = c;
@@ -32,8 +34,16 @@ public class TrieNode {
             node.isLeaf = isLf;
             return this;
         }
+        public Builder setParent(TrieNode p){
+            node.parent = p;
+            return this;
+        }
         public Builder setHeight(int h){
             node.height = h;
+            return this;
+        }
+        public Builder setIsWord(boolean isWord){
+            node.isWord = isWord;
             return this;
         }
         public TrieNode build(){
@@ -74,5 +84,21 @@ public class TrieNode {
 
     public void setChildren(Map<Character, TrieNode> children) {
         this.children = children;
+    }
+
+    public boolean isWord() {
+        return isWord;
+    }
+
+    public void setWord(boolean word) {
+        isWord = word;
+    }
+
+    public TrieNode getParent() {
+        return parent;
+    }
+
+    public void setParent(TrieNode parent) {
+        this.parent = parent;
     }
 }

@@ -12,8 +12,9 @@ public class AdMatcher {
         TreeUtil.addNode(tree,"中国");
         TreeUtil.addNode(tree,"中国人");
         TreeUtil.addNode(tree,"中华人民");
-        WordMatcher wordMatcher = new WordMatcher(tree,"我是中国人的中华人民");
+        WordMatcher wordMatcher = new WordMatcher(tree,"我是中-国的中华人民de");
         String s = wordMatcher.replaceSensetiveWords("*");
+        System.out.println(wordMatcher.isMatch());
         System.out.println(s);
     }
 
