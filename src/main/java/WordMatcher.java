@@ -11,16 +11,6 @@ public class WordMatcher {
     private String str;
     int position = 0;
 
-    //private static char[] specialChars = new char[]{'，',',','.','。','-','_'};
-    private static Set<Character> specialChars= new HashSet<>();
-    static {
-        specialChars.add('，');
-        specialChars.add(',');
-        specialChars.add('.');
-        specialChars.add('-');
-        specialChars.add('_');
-
-    }
     public WordMatcher(TrieNode tree,String str){
         this.tree = tree;
         this.str = str;
@@ -94,22 +84,24 @@ public class WordMatcher {
     }
 
     private Pair matchPair(TrieNode trienode,int index){
-        TrieNode node = findNode(trienode, index);
+        List<Character> chars = new ArrayList<>();
+        TrieNode node = findNode(trienode, index,chars);
         while (node != null && !node.isWord()){
             node = node.getParent();
         }
         if(node != null){
-            return new Pair(position,position+node.getHeight());
+            return new Pair(position,position+node.getHeight()+chars.size());
         }
         return null;
     }
-    private TrieNode findNode(TrieNode trieNode ,int index){
-        while (specialChars.contains(str.charAt(index))){
+    private TrieNode findNode(TrieNode trieNode ,int index,List chars){
+        while (TreeUtil.specialChars.contains(str.charAt(index))){//去掉特殊字符
+            chars.add(str.charAt(index));
             index ++;
         }
         TrieNode node = trieNode.getChildren().get(str.charAt(index));
         if(index < str.length() - 1 && node != null) {
-            return findNode(node,index + 1);
+            return findNode(node,index + 1,chars);
         }else {
             return node == null?trieNode:node;
         }

@@ -1,5 +1,6 @@
 import java.lang.management.ThreadInfo;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -7,8 +8,18 @@ import java.util.Set;
  * Created by fornia on 6/28/17.
  */
 public class TreeUtil {
+    public static Set<Character> specialChars= new HashSet<>();
+    static {
+        specialChars.add('，');
+        specialChars.add(',');
+        specialChars.add('.');
+        specialChars.add('-');
+        specialChars.add('_');
+
+    }
 
     public static void addNode(TrieNode tree, String word){
+        word = removeSpecialChars(word);
         if(word == null || word.length()<=0){
             throw new IllegalArgumentException();
         }
@@ -28,6 +39,20 @@ public class TreeUtil {
             }
             root = node;
         }
+    }
+
+    private static String removeSpecialChars(String str){
+        if(str == null || str.length() ==0){
+            throw new IllegalArgumentException();
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        for(char ch:str.toCharArray()){
+            if(specialChars.contains(ch)){
+                continue;
+            }
+            stringBuilder.append(ch);
+        }
+        return stringBuilder.toString();
     }
     public static TrieNode buildLeafNode(Character c,int height,TrieNode parent){
         return new TrieNode.Builder(c).setHeight(height).setIsLeaf(true).setIsWord(true).setParent(parent).build();
