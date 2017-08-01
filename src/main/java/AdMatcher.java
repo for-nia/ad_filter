@@ -11,11 +11,11 @@ public class AdMatcher {
 
     }
 
-    public static class AdMatcherBuilder{
-        private static final AdMatcher adMatcher = new AdMatcher();
-        public static AdMatcher getAdMatcher(){
-            return adMatcher;
-        }
+    public static AdMatcher getInstance(){
+        return AdMatcherBuilder.INSTANCE;
+    }
+    private static class AdMatcherBuilder{
+        private static final AdMatcher INSTANCE = new AdMatcher();
     }
 
     public void addWord(String word){

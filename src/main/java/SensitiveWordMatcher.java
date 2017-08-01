@@ -1,3 +1,4 @@
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 /**
  * Created by fornia on 8/1/17.
@@ -10,11 +11,12 @@ public class SensitiveWordMatcher {
     private SensitiveWordMatcher(){
 
     }
-    public static class SensitiveWordMatcherBuilder{
-        private static final SensitiveWordMatcher sensitiveWordMatcher = new SensitiveWordMatcher();
-        public static SensitiveWordMatcher getSensitiveWordMatcher(){
-            return sensitiveWordMatcher;
-        }
+
+    public static SensitiveWordMatcher getInstance(){
+        return SensitiveWordMatcherBuilder.INSTANCE;
+    }
+    private static class SensitiveWordMatcherBuilder{
+        private static final SensitiveWordMatcher INSTANCE = new SensitiveWordMatcher();
     }
 
     public void addWord(String word){
