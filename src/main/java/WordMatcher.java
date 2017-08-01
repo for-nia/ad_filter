@@ -1,7 +1,5 @@
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by fornia on 6/29/17.
@@ -10,31 +8,52 @@ public class WordMatcher {
     private final TrieNode tree;
     private String str;
     int position = 0;
+    List<Pair> pairs = new ArrayList<>(); //匹配到的关键词列表
+    List<TrieNode> wordNodes = new ArrayList<>();
 
     public WordMatcher(TrieNode tree,String str){
         this.tree = tree;
         this.str = str;
+        if(str == null){
+            throw new IllegalArgumentException("cannot pass null to match");
+        }
         doFilter();
     }
-    List<Pair> words = new ArrayList<>();
 
 
     public String replaceSensetiveWords(String replace){
         //doFilter();
         StringBuilder sb = new StringBuilder();
         List<String> split = split();
-        int size = words.size();
+        int size = pairs.size();
         for(int i=0 ;i <= size;i++){
             sb.append(split.get(i));
             if(i < size){
-                sb.append(getReplace(words.get(i),replace));
+                sb.append(getReplace(pairs.get(i),replace));
             }
         }
         return sb.toString();
     }
 
+    public List<String> getMatchWords(){
+        List<String> words = new ArrayList<>();
+        for(TrieNode node:wordNodes){
+            words.add(getWord(node));
+        }
+        return words;
+    }
+
+    private String getWord(TrieNode node){
+        StringBuilder stringBuilder = new StringBuilder();
+        while (null!=node&&node.getHeight()>=0){
+            stringBuilder.append(node.getContent());
+            node = node.getParent();
+        }
+        return stringBuilder.reverse().toString();
+    }
+
     public boolean isMatch(){
-        return words.size()>0;
+        return pairs.size()>0;
     }
 
     private String getReplace(Pair pair,String replace){
@@ -48,12 +67,12 @@ public class WordMatcher {
     List<String> split(){
         List<String> splits = new ArrayList<>();
         int start = 0;
-        int size = words.size();
+        int size = pairs.size();
         for(int i=0;i<=size;i++){
             if(i==size){
                splits.add(str.substring(start,str.length()));
             }else {
-                Pair pair = words.get(i);
+                Pair pair = pairs.get(i);
                 splits.add(str.substring(start, pair.start));
                 start = pair.end+1;
             }
@@ -80,7 +99,7 @@ public class WordMatcher {
     }
     private void handlePair(Pair pair){
         position += pair.end - pair.start + 1;
-        words.add(pair);
+        pairs.add(pair);
     }
 
     private Pair matchPair(TrieNode trienode,int index){
@@ -90,13 +109,14 @@ public class WordMatcher {
             node = node.getParent();
         }
         if(node != null){
+            wordNodes.add(node);
             return new Pair(position,position+node.getHeight()+chars.size());
         }
         return null;
     }
     private TrieNode findNode(TrieNode trieNode ,int index,List chars){
         while (TreeUtil.specialChars.contains(str.charAt(index))){//去掉特殊字符
-            chars.add(str.charAt(index));
+            chars.add(str.charAt(index));//记录特殊字符，主要目的是获取过滤词长度
             index ++;
         }
         TrieNode node = trieNode.getChildren().get(str.charAt(index));

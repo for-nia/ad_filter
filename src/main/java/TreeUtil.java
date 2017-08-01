@@ -1,21 +1,16 @@
-import java.lang.management.ThreadInfo;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * Created by fornia on 6/28/17.
  */
 public class TreeUtil {
+    private static String INVALID_CHARS = "#!%\":-,，.。~$`^=|<>～｀＄＾＝｜＜＞￥× ]⇦【】_";
     public static Set<Character> specialChars= new HashSet<>();
     static {
-        specialChars.add('，');
-        specialChars.add(',');
-        specialChars.add('.');
-        specialChars.add('-');
-        specialChars.add('_');
-
+        for(char ch : INVALID_CHARS.toCharArray()){
+            specialChars.add(ch);
+        }
     }
 
     public static void addNode(TrieNode tree, String word){
@@ -33,8 +28,7 @@ public class TreeUtil {
                 root.getChildren().put(c,node);
             }else {
                 if(i>=size-1){
-                    node.setWord(true);   // 到达词的重点,但是不是叶子节点,说明匹配到词语，但不是最长的
-                    //node.setLeaf(true);
+                    node.setWord(true);   // 到达词的终点,但是不是叶子节点,说明匹配到词语
                 }
             }
             root = node;
@@ -55,7 +49,7 @@ public class TreeUtil {
         return stringBuilder.toString();
     }
     public static TrieNode buildLeafNode(Character c,int height,TrieNode parent){
-        return new TrieNode.Builder(c).setHeight(height).setIsLeaf(true).setIsWord(true).setParent(parent).build();
+        return new TrieNode.Builder(c).setHeight(height).setIsLeaf(true).setParent(parent).build();
     }
     public static TrieNode buildCommonNode(Character c,int height,TrieNode parent){
         return new TrieNode.Builder(c).setHeight(height).setIsLeaf(false).setParent(parent).build();

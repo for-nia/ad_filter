@@ -1,7 +1,5 @@
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by fornia on 6/28/17.
@@ -9,7 +7,7 @@ import java.util.Set;
 public class TrieNode {
     private boolean isWord;
     private boolean isLeaf;
-    private int height;
+    private int height=-1;
     private char content;
     private Map<Character,TrieNode> children;
     TrieNode parent;
@@ -32,6 +30,7 @@ public class TrieNode {
         }
         public Builder setIsLeaf(boolean isLf){
             node.isLeaf = isLf;
+            node.isWord = true;
             return this;
         }
         public Builder setParent(TrieNode p){
@@ -42,10 +41,10 @@ public class TrieNode {
             node.height = h;
             return this;
         }
-        public Builder setIsWord(boolean isWord){
+        /*public Builder setIsWord(boolean isWord){
             node.isWord = isWord;
             return this;
-        }
+        }*/
         public TrieNode build(){
             return node;
         }
